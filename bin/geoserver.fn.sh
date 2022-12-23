@@ -89,12 +89,40 @@ stop_geoserver() {
     set -e
 }
 
+install_java_webapp_runner() {
+    local b_dir
+    local c_dir
+    local e_dir
+
+    local java_war_buildpack_url
+    local java_war_buildpack_dir
+
+    b_dir="${1}"
+    c_dir="${2}"
+    e_dir="${3}"
+
+    java_war_buildpack_url="https://github.com/Scalingo/java-war-buildpack.git"
+    java_war_buildpack_dir="$( mktemp java_war_buildpack_XXXX )"
+
+    # We only want a randome name, let's delete the dir:
+    rm "${java_war_buildpack_dir}"
+
+    # Clone the java-war-buildpack:
+    git clone --depth=1 "${java_war_buildpack_url}" "${java_war_buildpack_dir}"
+
+    # And launch it:
+    "${java_war_buildpack_dir}/bin/compile" \
+        "${b_dir}" "${c_dir}" "${e_dir}"
+
+    # Cleanup:
+    rm -Rf "${java_war_buildpack_dir}"
+}
 
 # Installs Java and webapp_runner
 #
 # Usage: install_webapp_runner <build_dir> <cache_dir> <java_version> <webapp_runner_version>
 #
-install_webapp_runner() {
+install_webapp_runner_2() {
     local jvm_url
     local runner_url
 
@@ -398,7 +426,7 @@ create_datastore() {
 readonly -f get_geoserver
 readonly -f run_geoserver
 readonly -f stop_geoserver
-readonly -f install_webapp_runner
+readonly -f install_java_webapp_runner
 readonly -f check_environment
 readonly -f print_environment
 readonly -f export_db_conn

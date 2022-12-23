@@ -40,13 +40,7 @@ echo "---> Running with:"
 print_environment
 
 echo "---> Installing JRE ${java_version}"
-install_webapp_runner "${build_dir}" "${cache_dir}" \
-    "${java_version}" "${webapp_runner_version}" \
-    || {
-        echo "!! Unable to install JRE. Aborting." >&2
-        exit 1
-    }
-
+install_java_webapp_runner "${build_dir}" "${cache_dir}" "${env_dir}"
 
 get_geoserver "${build_dir}" "${cache_dir}" "${geoserver_version}"
 
