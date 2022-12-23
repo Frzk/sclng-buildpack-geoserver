@@ -65,7 +65,7 @@ readonly geoserver_pid="${!}"
 if [ -n "${geoserver_pid}" ]
 then
     echo "---> Started temporary GeoServer on ${temp_host} (pid: ${geoserver_pid})"
-    curl --silent --retry 6 --retry-connrefused --retry-delay 0 -4 \
+    curl --silent --retry 8 --retry-connrefused -4 \
         "${temp_host}"
 
     echo "---> Processing configuration templates"
