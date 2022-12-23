@@ -197,8 +197,8 @@ print_environment() {
     echo -e "     GEOSERVER_VERSION: ${geoserver_version}"
     echo -e "     GEOSERVER_CONFIG_SCRIPT: ${geoserver_config_script}"
     echo -e "     GEOSERVER_DATA_DIR: ${geoserver_data_dir}"
-    echo -e "     JAVA_VERSION: ${java_version}"
-    echo -e "     JAVA_WEBAPP_RUNNER_VERSION: ${webapp_runner_version}"
+    echo -e "     JAVA_VERSION: ${JAVA_VERSION}"
+    echo -e "     JAVA_WEBAPP_RUNNER_VERSION: ${JAVA_WEBAPP_RUNNER_VERSION}"
 }
 
 
