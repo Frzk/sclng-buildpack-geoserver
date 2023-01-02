@@ -89,6 +89,10 @@ stop_geoserver() {
     set -e
 }
 
+# Installs Java and webapp_runner, thanks to the java-war-buildpack.
+#
+# Usage: install_java_webapp_runner <build_dir> <cache_dir> <env_dir>
+#
 install_java_webapp_runner() {
     local b_dir
     local c_dir
@@ -104,13 +108,13 @@ install_java_webapp_runner() {
     java_war_buildpack_url="https://github.com/Scalingo/java-war-buildpack.git"
     java_war_buildpack_dir="$( mktemp java_war_buildpack_XXXX )"
 
-    # We only want a randome name, let's delete the dir:
+    # We only want a random name, let's delete the dir:
     rm "${java_war_buildpack_dir}"
 
     # Clone the java-war-buildpack:
     git clone --depth=1 "${java_war_buildpack_url}" "${java_war_buildpack_dir}"
 
-    # And launch it:
+    # And call it:
     "${java_war_buildpack_dir}/bin/compile" \
         "${b_dir}" "${c_dir}" "${e_dir}"
 

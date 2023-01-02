@@ -141,7 +141,8 @@ cp "${buildpack_dir}/bin/startup.sh" "${build_dir}/bin/"
 
 # Leaving the BUILD phase, setting `GEOSERVER_DATA_DIR` back to its
 # initial value.
-export GEOSERVER_DATA_DIR="${geoserver_data_dir}"
+GEOSERVER_DATA_DIR="${geoserver_data_dir}"
+export GEOSERVER_DATA_DIR
 
 # Make sure GEOSERVER_DATA_DIR is exported when RUNning:
 cat > ".profile.d/geoserver.sh" <<SH
