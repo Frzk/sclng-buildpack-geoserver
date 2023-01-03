@@ -42,7 +42,7 @@ print_environment
 echo "---> Installing JRE ${JAVA_VERSION}"
 install_java_webapp_runner "${build_dir}" "${cache_dir}" "${env_dir}"
 
-export_env_dir "${env_dir}"
+export_env_from_dir "${env_dir}"
 #for f in "${build_dir}/.profile.d/"*
 #do
 #    if [ -f "${f}" ]; then

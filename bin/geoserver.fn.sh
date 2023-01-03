@@ -245,6 +245,27 @@ check_environment() {
 }
 
 
+# Loads environment variables from the given environment directory.
+#
+# Usage: export_env_from_dir <env_dir> [<whitelist_regex>] [<blacklist_regex>]
+#
+export_env_from_dir() {
+    env_dir="${1}"
+    whitelist_regex="${2:-''}"
+    blacklist_regex="${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|JAVA_OPTS|JAVA_TOOL_OPTIONS)$'}"
+
+    if [ -d "${env_dir}" ]; then
+        for e in "$( ls "${env_dir}" )"; do
+            echo "${e}" \
+                | grep -E "${whitelist_regex}" \
+                | grep -qvE "${blacklist_regex}" \
+                && export "${e}=$( cat ${env_dir}/${e} )"
+            :
+        done
+    fi
+}
+
+
 # Split the DB connexion string into multiple environment variables
 # so we can use them in the templates
 #
@@ -431,6 +452,7 @@ readonly -f get_geoserver
 readonly -f run_geoserver
 readonly -f stop_geoserver
 readonly -f install_java_webapp_runner
+readonly -f export_env_from_dir
 readonly -f check_environment
 readonly -f print_environment
 readonly -f export_db_conn
