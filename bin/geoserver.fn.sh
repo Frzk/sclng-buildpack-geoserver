@@ -120,6 +120,12 @@ install_java_webapp_runner() {
 
     # Cleanup:
     rm -Rf "${java_war_buildpack_dir}"
+
+    # Check if the java-war-buildpack left behind an environment for
+    # subsequent ones:
+    if [ -e "${b_dir}/export" ]; then
+        source "${b_dir}/export"
+    fi
 }
 
 # Installs Java and webapp_runner
