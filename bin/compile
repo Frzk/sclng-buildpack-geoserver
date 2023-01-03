@@ -43,12 +43,10 @@ echo "---> Installing JRE ${JAVA_VERSION}"
 install_java_webapp_runner "${build_dir}" "${cache_dir}" "${env_dir}"
 
 export_env_from_dir "${env_dir}"
-#for f in "${build_dir}/.profile.d/"*
-#do
-#    if [ -f "${f}" ]; then
-#        source "${f}"
-#    fi
-#done
+
+while IFS= read -r -d '' file; do
+    source "${file}"
+done < <( find "${build_dir}/.profile.d" -type f -name "*.sh" -print0 )
 
 get_geoserver "${build_dir}" "${cache_dir}" "${geoserver_version}"
 
