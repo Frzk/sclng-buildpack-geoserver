@@ -128,76 +128,6 @@ install_java_webapp_runner() {
     fi
 }
 
-# Installs Java and webapp_runner
-#
-# Usage: install_webapp_runner <build_dir> <cache_dir> <java_version> <webapp_runner_version>
-#
-install_webapp_runner_2() {
-    local jvm_url
-    local runner_url
-
-    local build_d
-    local cache_d
-
-    local tmp_d
-    local jre_version
-    local runner_version
-
-    local cached_jvm_common
-    local cached_runner
-
-    build_d="${1}"
-    cache_d="${2}"
-    jre_version="${3}"
-    runner_version="${4}"
-
-    jvm_url="https://buildpacks-repository.s3.eu-central-1.amazonaws.com/jvm-common.tar.xz"
-    runner_url="https://buildpacks-repository.s3.eu-central-1.amazonaws.com/webapp-runner-${runner_version}.jar"
-
-    # Install JVM common tools:
-    cached_jvm_common="${cache_d}/jvm-common.tar.xz"
-
-    if [ ! -f "${cached_jvm_common}" ]
-    then
-        curl --location --silent --retry 6 --retry-connrefused --retry-delay 0 \
-            "${jvm_url}" \
-            --output "${cached_jvm_common}"
-    fi
-
-    tmp_d=$( mktemp -d jvm-common-XXXXXX ) && {
-        tar --extract --xz --touch --strip-components=1 \
-            --file "${cached_jvm_common}" \
-            --directory "${tmp_d}"
-
-        # Source utilities and functions:
-        source "${tmp_d}/bin/util"
-        source "${tmp_d}/bin/java"
-
-        echo "java.runtime.version=${jre_version}" \
-            > "${build_d}/system.properties"
-
-        install_java_with_overlay "${build_d}"
-
-        rm -Rf "${tmp_d}"
-    }
-
-    # Install Webapp Runner
-    cached_runner="${cache_d}/webapp-runner-${runner_version}.jar"
-
-    if [ ! -f "${cached_runner}" ]
-    then
-        curl --location --silent --retry 6 --retry-connrefused --retry-delay 0 \
-            "${runner_url}" \
-            --output "${cached_runner}" \
-            || {
-                echo "Unable to download webapp runner ${runner_version}. Aborting."
-                exit 1
-            }
-    fi
-
-    cp "${cached_runner}" "${build_d}/webapp-runner.jar"
-}
-
 
 # Prints out some environment variables.
 #
@@ -247,27 +177,6 @@ check_environment() {
     if [ ${mandatory_is_ok} -ne 0 ]
     then
         exit 1
-    fi
-}
-
-
-# Loads environment variables from the given environment directory.
-#
-# Usage: export_env_from_dir <env_dir> [<whitelist_regex>] [<blacklist_regex>]
-#
-export_env_from_dir() {
-    env_dir="${1}"
-    whitelist_regex="${2:-''}"
-    blacklist_regex="${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|JAVA_OPTS|JAVA_TOOL_OPTIONS)$'}"
-
-    if [ -d "${env_dir}" ]; then
-        for e in "$( ls "${env_dir}" )"; do
-            echo "${e}" \
-                | grep -E "${whitelist_regex}" \
-                | grep -qvE "${blacklist_regex}" \
-                && export "${e}=$( cat ${env_dir}/${e} )"
-            :
-        done
     fi
 }
 
@@ -458,7 +367,6 @@ readonly -f get_geoserver
 readonly -f run_geoserver
 readonly -f stop_geoserver
 readonly -f install_java_webapp_runner
-readonly -f export_env_from_dir
 readonly -f check_environment
 readonly -f print_environment
 readonly -f export_db_conn
